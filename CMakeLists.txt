@@ -28,16 +28,16 @@ include(cmake/get_dependencies.cmake)
 
 # Define the documentation target
 include(nwx_cxx_api_docs)
-nwx_cxx_api_docs("include" "src")
+nwx_cxx_api_docs("cpp/include" "cpp/src")
 
 # Build the Library
-file(GLOB_RECURSE WTF_HEADER_FILES CONFIGURE_DEPENDS include/wtf/*.hpp)
-file(GLOB_RECURSE WTF_SOURCE_FILES CONFIGURE_DEPENDS src/wtf/*.cpp)
+file(GLOB_RECURSE WTF_HEADER_FILES CONFIGURE_DEPENDS cpp/include/wtf/*.hpp)
+file(GLOB_RECURSE WTF_SOURCE_FILES CONFIGURE_DEPENDS cpp/src/wtf/*.cpp)
 add_library(${PROJECT_NAME} ${WTF_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/cpp/include>
         $<INSTALL_INTERFACE:include>
 )
 
@@ -47,7 +47,7 @@ if(${BUILD_TESTING})
     include(cmake/catch2_tests_from_dir.cmake)
     catch2_tests_from_dir(
         "unit_test_${PROJECT_NAME}"
-        tests/unit_tests/wtf
+        tests/cpp/unit_tests/wtf
         ${PROJECT_NAME}
     )
 endif()
@@ -55,5 +55,5 @@ endif()
 include(cmake/install_target.cmake)
 install_library(
     ${PROJECT_NAME}
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cpp/include/${PROJECT_NAME}"
 )

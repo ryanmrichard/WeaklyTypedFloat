@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-venv/
-.cache/
-.venv/
-build/
-__pycache__/
-.pytest_cache/
+include_guard()
+include(FetchContent)
+
+FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11
+    GIT_TAG        "v2.13.6"
+)

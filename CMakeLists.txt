@@ -33,6 +33,7 @@ nwx_cxx_api_docs("cpp/include" "cpp/src")
 # Build the Library
 file(GLOB_RECURSE WTF_HEADER_FILES CONFIGURE_DEPENDS cpp/include/wtf/*.hpp)
 file(GLOB_RECURSE WTF_SOURCE_FILES CONFIGURE_DEPENDS cpp/src/wtf/*.cpp)
+list(FILTER WTF_SOURCE_FILES EXCLUDE REGEX ".*/export_.*\\.cpp$")
 add_library(${PROJECT_NAME} ${WTF_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
@@ -50,6 +51,22 @@ if(${BUILD_TESTING})
         tests/cpp/unit_tests/wtf
         ${PROJECT_NAME}
     )
+endif()
+
+
+option(BUILD_PYBIND11_BINDINGS "Build Python bindings via pybind11" ON)
+if(BUILD_PYBIND11_BINDINGS)
+    get_dependencies(pybind11)
+    pybind11_add_module(wtf_python
+        cpp/src/wtf/export_wtf.cpp
+        cpp/src/wtf/fp/export_float.cpp
+    )
+    target_link_libraries(wtf_python PRIVATE ${PROJECT_NAME})
+    target_include_directories(wtf_python PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/include
+    )
+    set_target_properties(wtf_python PROPERTIES OUTPUT_NAME wtf)
+    install(TARGETS wtf_python DESTINATION ${SKBUILD_PLATLIB_DIR})
 endif()
 
 include(cmake/install_target.cmake)

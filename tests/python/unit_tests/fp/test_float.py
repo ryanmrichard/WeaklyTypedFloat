@@ -1,4 +1,4 @@
-# Copyright 2025 NWChemEx-Project
+# Copyright 2026 NWChemEx-Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-venv/
-.cache/
-.venv/
-build/
-__pycache__/
-.pytest_cache/
+"""Unit tests for the wtf.Float Python binding."""
+
+import wtf
+
+
+def test_import():
+    assert hasattr(wtf, "Float")
+
+
+def test_set_value():
+    f = wtf.Float(3.14)
+    assert f is not None
+
+
+def test_to_string():
+    f = wtf.Float(3.14)
+    s = f.to_string()
+    assert "3.14" in s

@@ -42,6 +42,10 @@ target_include_directories(${PROJECT_NAME}
         $<INSTALL_INTERFACE:include>
 )
 
+if(BUILD_PYBIND11_BINDINGS)
+    set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
 if(${BUILD_TESTING})
     include(CTest)
     get_dependencies(catch2)
@@ -66,7 +70,9 @@ if(BUILD_PYBIND11_BINDINGS)
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/include
     )
     set_target_properties(wtf_python PROPERTIES OUTPUT_NAME wtf)
-    install(TARGETS wtf_python DESTINATION ${SKBUILD_PLATLIB_DIR})
+    install(TARGETS wtf_python
+        DESTINATION $<IF:$<BOOL:${SKBUILD_PLATLIB_DIR}>,${SKBUILD_PLATLIB_DIR},lib>
+    )
 endif()
 
 include(cmake/install_target.cmake)

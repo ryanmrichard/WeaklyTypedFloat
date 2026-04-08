@@ -46,12 +46,12 @@ jobs:
         run: |
           sudo apt-get update -y
           if [[ "${{ matrix.compiler }}" == gcc-* ]]; then
-            version="${{ matrix.compiler }#gcc-}"
+            version=$(echo "${{ matrix.compiler }}" | sed 's/gcc-//')
             sudo apt-get install -y gcc-${version} g++-${version}
             echo "CC=gcc-${version}" >> $GITHUB_ENV
             echo "CXX=g++-${version}" >> $GITHUB_ENV
           else
-            version="${{ matrix.compiler }#clang-}"
+            version=$(echo "${{ matrix.compiler }}" | sed 's/clang-//')
             sudo apt-get install -y clang-${version}
             echo "CC=clang-${version}" >> $GITHUB_ENV
             echo "CXX=clang++-${version}" >> $GITHUB_ENV

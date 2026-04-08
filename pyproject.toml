@@ -17,7 +17,7 @@ requires = ["scikit-build-core>=0.10", "pybind11"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "wtf"
+name = "weaklytypedfloat"
 version = "1.0.0"
 description = "Weakly Typed Float — a DSL for type-erased floating-point types"
 license = { text = "Apache-2.0" }

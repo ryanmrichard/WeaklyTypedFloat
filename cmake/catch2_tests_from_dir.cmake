@@ -15,6 +15,11 @@
 include_guard()
 
 function(catch2_tests_from_dir ctfd_target_name ctfd_dir)
+if(${BUILD_TESTING})
+    include(CTest)
+    include(cmake/get_dependencies.cmake)
+    get_dependencies(catch2)
+
     file(GLOB_RECURSE ctfd_test_files CONFIGURE_DEPENDS ${ctfd_dir}/*.cpp)
 
     add_executable(${ctfd_target_name} ${ctfd_test_files})
@@ -26,4 +31,5 @@ function(catch2_tests_from_dir ctfd_target_name ctfd_dir)
              COMMAND ${ctfd_target_name}
              WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
+endif()
 endfunction()

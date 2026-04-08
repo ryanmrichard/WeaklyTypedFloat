@@ -19,6 +19,7 @@ include(cmake/get_nwx_cmake.cmake)
 project(wtf VERSION "1.0.0" LANGUAGES CXX)
 include(cmake/disable_in_source_builds.cmake)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # TODO: Make these into proper options
 set(BUILD_TESTING TRUE)

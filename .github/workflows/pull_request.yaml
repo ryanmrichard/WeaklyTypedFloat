@@ -36,26 +36,15 @@ jobs:
 
   test_python:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [gcc-14, clang-18]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install compiler (${{ matrix.compiler }})
+      - name: Install clang-18
         run: |
           sudo apt-get update -y
-          if [[ "${{ matrix.compiler }}" == gcc-* ]]; then
-            version=$(echo "${{ matrix.compiler }}" | sed 's/gcc-//')
-            sudo apt-get install -y gcc-${version} g++-${version}
-            echo "CC=gcc-${version}" >> $GITHUB_ENV
-            echo "CXX=g++-${version}" >> $GITHUB_ENV
-          else
-            version=$(echo "${{ matrix.compiler }}" | sed 's/clang-//')
-            sudo apt-get install -y clang-${version}
-            echo "CC=clang-${version}" >> $GITHUB_ENV
-            echo "CXX=clang++-${version}" >> $GITHUB_ENV
-          fi
+          sudo apt-get install -y clang-18
+          echo "CC=clang-18" >> $GITHUB_ENV
+          echo "CXX=clang++-18" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -83,6 +72,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Install clang-18
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang-18
+          echo "CC=clang-18" >> $GITHUB_ENV
+          echo "CXX=clang++-18" >> $GITHUB_ENV
 
       - name: Install build
         run: pip install build

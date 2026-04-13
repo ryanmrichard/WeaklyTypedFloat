@@ -14,10 +14,11 @@
 
 cmake_minimum_required(VERSION 3.14)
 # Downloads common CMake modules used throughout NWChemEx
+project(wtf VERSION "1.0.0" LANGUAGES CXX)
+
 include(cmake/get_nwx_cmake.cmake)
 
-project(wtf VERSION "1.0.0" LANGUAGES CXX)
-include(cmake/disable_in_source_builds.cmake)
+include(disable_in_source_builds)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
@@ -31,17 +32,17 @@ include(nwx_cxx_api_docs)
 nwx_cxx_api_docs("cpp/include" "cpp/src")
 
 # Build the Library
-include(cmake/nwx_library.cmake)
+include(nwx_library)
 nwx_library(${PROJECT_NAME} "cpp/include" "cpp/src")
 
 # Register the C++ tests
-include(cmake/catch2_tests_from_dir.cmake)
+include(catch2_tests_from_dir)
 catch2_tests_from_dir(
         "unit_test_${PROJECT_NAME}"
-        tests/cpp/unit_tests/wtf
+        "tests/cpp/unit_tests/${PROJECT_NAME}"
         ${PROJECT_NAME}
 )
 
 # Register the Python module
-include(cmake/nwx_python_module.cmake)
+include(nwx_python_module)
 nwx_python_module(${PROJECT_NAME}_python "cpp/src")

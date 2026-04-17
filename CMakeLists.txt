@@ -29,20 +29,20 @@ option(BUILD_PYBIND11_BINDINGS "Build Python bindings via pybind11" ON)
 
 # Define the documentation target
 include(nwx_cxx_api_docs)
-nwx_cxx_api_docs("cpp/include" "cpp/src")
+nwx_cxx_api_docs("cxx/include" "cxx/src")
 
 # Build the Library
 include(nwx_library)
-nwx_library(${PROJECT_NAME} "cpp/include" "cpp/src")
+nwx_library(${PROJECT_NAME} "cxx/include" "cxx/src")
 
 # Register the C++ tests
 include(catch2_tests_from_dir)
 catch2_tests_from_dir(
-        "unit_test_${PROJECT_NAME}"
-        "tests/cpp/unit_tests/${PROJECT_NAME}"
-        ${PROJECT_NAME}
+    "unit_test_${PROJECT_NAME}"
+    "tests/cxx/unit_tests/${PROJECT_NAME}"
+    ${PROJECT_NAME}
 )
 
 # Register the Python module
 include(nwx_python_module)
-nwx_python_module(${PROJECT_NAME}_python "cpp/src")
+nwx_python_module(${PROJECT_NAME} "cxx/src")

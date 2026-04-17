@@ -38,6 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install clang-18
         run: |
@@ -75,33 +77,28 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Bump version for TestPyPI (unique per workflow invocation)
+      - name: Set pretend version for TestPyPI (unique per workflow run)
         run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install "setuptools-scm>=8"
           python3 <<'PY'
           import os
-          import re
-          from pathlib import Path
 
-          path = Path("pyproject.toml")
-          text = path.read_text(encoding="utf-8")
-          m = re.search(r'(?m)^version = "([^"]+)"', text)
-          if not m:
-              raise SystemExit("Could not find project version in pyproject.toml")
-          base = m.group(1)
-          # GITHUB_RUN_ID is unique for every run including "re-run failed jobs"
+          from setuptools_scm import get_version
+
+          gh_env = os.environ.get("GITHUB_ENV")
+          if not gh_env:
+              raise SystemExit("GITHUB_ENV is not set")
+
+          base = get_version(local_scheme="no-local-version")
           rid = os.environ["GITHUB_RUN_ID"]
-          new_ver = f"{base}.dev{rid}"
-          text, n = re.subn(
-              r'(?m)^version = "[^"]+"',
-              f'version = "{new_ver}"',
-              text,
-              count=1,
-          )
-          if n != 1:
-              raise SystemExit(f"expected 1 version line updated, got {n}")
-          path.write_text(text, encoding="utf-8")
-          print(f"Version set to {new_ver} for wheel upload")
+          pretend = f"{base}.post{rid}"
+          with open(gh_env, "a", encoding="utf-8") as f:
+              f.write(f"SETUPTOOLS_SCM_PRETEND_VERSION={pretend}\n")
+          print(f"SETUPTOOLS_SCM_PRETEND_VERSION={pretend}")
           PY
 
       - name: Build wheels

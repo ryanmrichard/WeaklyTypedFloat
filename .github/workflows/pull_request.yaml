@@ -76,6 +76,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Bump version for TestPyPI (unique per workflow invocation)
+        run: |
+          python3 <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          path = Path("pyproject.toml")
+          text = path.read_text(encoding="utf-8")
+          m = re.search(r'(?m)^version = "([^"]+)"', text)
+          if not m:
+              raise SystemExit("Could not find project version in pyproject.toml")
+          base = m.group(1)
+          # GITHUB_RUN_ID is unique for every run including "re-run failed jobs"
+          rid = os.environ["GITHUB_RUN_ID"]
+          new_ver = f"{base}.dev{rid}"
+          text, n = re.subn(
+              r'(?m)^version = "[^"]+"',
+              f'version = "{new_ver}"',
+              text,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit(f"expected 1 version line updated, got {n}")
+          path.write_text(text, encoding="utf-8")
+          print(f"Version set to {new_ver} for wheel upload")
+          PY
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:

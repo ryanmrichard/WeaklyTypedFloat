@@ -16,6 +16,7 @@
 
 #pragma once
 #include <span>
+#include <vector>
 #include <wtf/buffer/detail_/buffer_holder.hpp>
 #include <wtf/buffer/detail_/contiguous_view_model.hpp>
 #include <wtf/concepts/floating_point.hpp>

@@ -20,9 +20,7 @@ project(wtf VERSION "1.0.0" LANGUAGES CXX)
 include(cmake/disable_in_source_builds.cmake)
 set(CMAKE_CXX_STANDARD 20)
 
-# TODO: Make these into proper options
-set(BUILD_TESTING TRUE)
-set(CMAKE_BUILD_SHARED_LIBS ON)
+option(BUILD_TESTING "Whether to build the unit tests" OFF)
 
 include(cmake/get_dependencies.cmake)
 

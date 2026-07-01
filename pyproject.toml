@@ -13,11 +13,16 @@
 # limitations under the License.
 
 [build-system]
-requires = ["scikit-build-core>=0.10", "pybind11", "setuptools-scm>=8"]
+requires = [
+    "scikit-build-core>=0.10",
+    "pybind11",
+    "setuptools-scm>=8",
+    "nwchemex-nwxcmake @ git+https://github.com/NWChemEx/NWXCMake",
+]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "weaklytypedfloat"
+name = "nwchemex-weaklytypedfloat"
 dynamic = ["version"]
 description = "Weakly Typed Float — a DSL for type-erased floating-point types"
 license = { text = "Apache-2.0" }

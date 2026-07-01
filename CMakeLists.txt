@@ -14,23 +14,14 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-# Version from scikit-build-core when building wheels/sdists; plain CMake keeps 1.0.0.
-# project(VERSION) accepts only numeric major.minor.patch[.tweak]; strip any PEP440 suffix.
-if(DEFINED SKBUILD_PROJECT_VERSION AND NOT SKBUILD_PROJECT_VERSION STREQUAL "")
-    set(_wtf_version_source "${SKBUILD_PROJECT_VERSION}")
-else()
-    set(_wtf_version_source "1.0.0")
-endif()
-if(_wtf_version_source MATCHES "^([0-9]+)\\.([0-9]+)\\.([0-9]+)")
-    set(_wtf_cmake_version "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}")
-else()
-    set(_wtf_cmake_version "1.0.0")
-endif()
-
-# Downloads common CMake modules used throughout NWChemEx
-project(wtf VERSION "${_wtf_cmake_version}" LANGUAGES CXX)
-
+# Downloads common CMake modules used throughout NWChemEx. Included before
+# project() so nwx_set_version() is available to compute the version.
 include(cmake/get_nwx_cmake.cmake)
+
+# Version from scikit-build-core (wheels/sdists) or the latest git tag.
+include(nwx_set_version)
+nwx_set_version(wtf_version "${CMAKE_CURRENT_LIST_DIR}")
+project(wtf VERSION "${wtf_version}" LANGUAGES CXX)
 
 include(disable_in_source_builds)
 set(CMAKE_CXX_STANDARD 20)

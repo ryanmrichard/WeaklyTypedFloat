@@ -24,14 +24,7 @@ nwx_set_version(wtf_version "${CMAKE_CURRENT_LIST_DIR}")
 project(wtf VERSION "${wtf_version}" LANGUAGES CXX)
 
 include(disable_in_source_builds)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
-
-# TODO: Make these into proper options
-set(BUILD_TESTING TRUE)
-set(CMAKE_BUILD_SHARED_LIBS ON)
-option(BUILD_PYBIND11_BINDINGS "Build Python bindings via pybind11" ON)
-option(BUILD_TESTING "Whether to build the unit tests" OFF)
+include(set_default_nwx_options)
 
 # Define the documentation target
 include(nwx_cxx_api_docs)

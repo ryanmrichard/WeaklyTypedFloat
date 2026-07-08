@@ -31,6 +31,21 @@ jobs:
       doc_target: "wtf_cxx_api"
     secrets: inherit
 
+  platform_matrix:
+    uses: NWChemEx/.github/.github/workflows/platform_matrix.yaml@master
+
   deploy_to_pypi:
-    needs: tag-commit
-    uses: NWChemEx/.github/.github/workflows/deploy_nwx_pypi.yaml@master
+    needs: [tag-commit, platform_matrix]
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.platform_matrix.outputs.release_matrix) }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      id-token: write
+    steps:
+      - name: Deploy to PyPI
+        uses: NWChemEx/.github/.github/actions/deploy_to_pypi@master
+        with:
+          cibw_build: ${{ matrix.cibw_build }}
+          build_sdist: ${{ matrix.os == 'ubuntu-latest' && 'true' || 'false' }}

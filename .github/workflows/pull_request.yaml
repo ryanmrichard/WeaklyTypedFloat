@@ -35,7 +35,20 @@ jobs:
   test_pip_build:
     uses: NWChemEx/.github/.github/workflows/test_nwx_pip_build.yaml@master
 
+  platform_matrix:
+    uses: NWChemEx/.github/.github/workflows/platform_matrix.yaml@master
+
   test_pypi_deploy:
-    uses: NWChemEx/.github/.github/workflows/deploy_nwx_pypi.yaml@master
-    with:
-      dry_run: "true"
+    needs: platform_matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.platform_matrix.outputs.release_matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Test PyPI Deploy
+        uses: NWChemEx/.github/.github/actions/deploy_to_pypi@master
+        with:
+          cibw_build: ${{ matrix.cibw_build }}
+          build_sdist: ${{ matrix.os == 'ubuntu-latest' && 'true' || 'false' }}
+          dry_run: "true"

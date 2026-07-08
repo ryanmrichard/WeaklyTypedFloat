@@ -44,8 +44,13 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Deploy to PyPI
-        uses: NWChemEx/.github/.github/actions/deploy_to_pypi@master
+      - name: Build PyPI Distribution
+        uses: NWChemEx/.github/.github/actions/build_pypi_dist@master
         with:
           cibw_build: ${{ matrix.cibw_build }}
           build_sdist: ${{ matrix.os == 'ubuntu-latest' && 'true' || 'false' }}
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

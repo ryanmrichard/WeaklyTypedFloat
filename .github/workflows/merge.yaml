@@ -1,4 +1,4 @@
-# Copyright 2023 NWChemEx-Project
+# Copyright 2026 NWChemEx-Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,3 +30,7 @@ jobs:
     with:
       doc_target: "wtf_cxx_api"
     secrets: inherit
+
+  deploy_to_pypi:
+    needs: tag-commit
+    uses: NWChemEx/.github/.github/workflows/deploy_nwx_pypi.yaml@master

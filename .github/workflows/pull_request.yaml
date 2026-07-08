@@ -1,4 +1,4 @@
-# Copyright 2025 NWChemEx-Project
+# Copyright 2026 NWChemEx-Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,85 +29,13 @@ jobs:
     with:
       doc_target: "wtf_cxx_api"
 
-  test_library:
-    uses: NWChemEx/.github/.github/workflows/test_nwx_library.yaml@master
+  test_cmake_build:
+    uses: NWChemEx/.github/.github/workflows/test_nwx_cmake_build.yaml@master
+
+  test_pip_build:
+    uses: NWChemEx/.github/.github/workflows/test_nwx_pip_build.yaml@master
+
+  test_pypi_deploy:
+    uses: NWChemEx/.github/.github/workflows/deploy_nwx_pypi.yaml@master
     with:
-      compilers: '["gcc-14", "clang-18"]'
-
-  test_python:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install clang-18
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y clang-18
-          echo "CC=clang-18" >> $GITHUB_ENV
-          echo "CXX=clang++-18" >> $GITHUB_ENV
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Editable install (dev)
-        run: pip install -e ".[dev]"
-
-      - name: Run C++ tests
-        run: cd build && ctest --output-on-failure
-
-      - name: Run Python tests
-        run: pytest tests/python/
-
-  deploy_to_testpypi:
-    needs: test_python
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            cibw_build: cp312-manylinux_x86_64
-          - os: macos-14
-            cibw_build: cp312-macosx_arm64
-    runs-on: ${{ matrix.os }}
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set pretend version for TestPyPI (unique per workflow run)
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install "setuptools-scm>=8"
-          python3 <<'PY'
-          import os
-
-          from setuptools_scm import get_version
-
-          gh_env = os.environ.get("GITHUB_ENV")
-          if not gh_env:
-              raise SystemExit("GITHUB_ENV is not set")
-
-          base = get_version(local_scheme="no-local-version")
-          rid = os.environ["GITHUB_RUN_ID"]
-          pretend = f"{base}.post{rid}"
-          with open(gh_env, "a", encoding="utf-8") as f:
-              f.write(f"SETUPTOOLS_SCM_PRETEND_VERSION={pretend}\n")
-          print(f"SETUPTOOLS_SCM_PRETEND_VERSION={pretend}")
-          PY
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.22.0
-        env:
-          CIBW_BUILD: ${{ matrix.cibw_build }}
-
-      - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: wheelhouse/
-          repository-url: https://test.pypi.org/legacy/
+      dry_run: "true"
